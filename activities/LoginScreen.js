@@ -1,11 +1,24 @@
 import React, { Component }  from 'react';
-import { Alert, TextInput, TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { Alert, TextInput, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
 //StyleSheet.setStyleAttributePreprocessor('fontFamily', Font.processFontFamily);
 import GradientButton from 'react-native-gradient-buttons';
 import { AppLoading } from 'expo';
 import AnimatedInput from 'react-native-animated-input-label';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Font from 'expo-font';
+import RNPickerSelect, { defaultStyles } from 'react-native-picker-select';
+import { Chevron } from 'react-native-shapes';
+
+const usertype = [
+  {
+    label: 'Hotel',
+    value: 'Hotel',
+  },
+  {
+    label: 'Orphanage',
+    value: 'Orphanage',
+  },
+];
 
 class LoginScreen extends React.Component{
   constructor(props){
@@ -13,9 +26,11 @@ class LoginScreen extends React.Component{
       this.state = {
            //isReady: false,
            username: '',
-           password: '',
+           password: '', 
+           firstSeenVal: undefined,
       };
   }
+
   // async componentDidMount(){
      //   await Font.loadAsync({
        //    'Poppins-Medium' : require('../assets/fonts/Poppins-Medium.ttf'),
@@ -24,11 +39,7 @@ class LoginScreen extends React.Component{
   // }
   static navigationOptions=
   {
-    //title:'Ayinidam Login',
-    //headerTitleStyle: {
-       //    fontWeight: '500',
-         //  fontSize: 25,
-                      //},
+    header: null,    //Hide navigator top
   }
   OpenRegisterActivityFunction = () =>
   {
@@ -36,20 +47,51 @@ class LoginScreen extends React.Component{
   }
   onLogin()
   {
-    const {username, password } = this.state;
-    Alert.alert('Message:',`${username}, thanks for logging in`);
+    //const {username, password } = this.state;
+    //Alert.alert('Message:',`${username}, thanks for logging in`);
+    this.props.navigation.navigate('HotelHome');
   }
   handleFocus = () => this.setState({ isFocused: true });
   handleBlur = () => this.setState({ isFocused: false });
   render()
   {
     const { ...props } = this.props;
+    const placeholder = {
+      label: 'Select a type...',
+      value: null,
+      color: '#F08080',
+    };
     return(        
         <LinearGradient
               colors={['#003399','#3366FF','#3399FF','#66ccff']}
               style={styles.container}
         >
           <Text style={styles.Head1Txt}>LOGIN</Text>
+          <View paddingVertical={5} />
+            {/* False -useNativeAndroidPickerStyle (default) and iOS onUpArrow/onDownArrow toggle example */}
+          <RNPickerSelect
+            placeholder={placeholder}
+            items={usertype}
+            useNativeAndroidPickerStyle={false}
+            value={this.state.firstSeenVal}
+            onValueChange={value => {
+              this.setState({
+                firstSeenVal: value,
+              });
+            }}
+            style={{
+              ...pickerSelectStyles,
+              width: 200,
+              iconContainer: {
+                top: 20,
+                right: 70,
+              },
+            }}
+            //textInputProps={{ underlineColor: 'yellow' }}
+            Icon={() => {
+              return <Chevron size={2.0} color="#EAE4E2" />;
+            }}
+          />
           <View>               
               <AnimatedInput 
                   {...props}
@@ -116,9 +158,10 @@ const styles = StyleSheet.create({
   },
   Head1Txt: {
     fontSize:36,
+    fontWeight: 'bold',
     color:'#ffffff',
     textAlign:'center',
-    paddingBottom:24,
+    paddingBottom:40,
   },
   ActNmeTxt: {
     fontSize:35,
@@ -150,6 +193,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   }
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 20,
+    alignItems:'center',
+    marginLeft:50,
+    marginRight:50,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#EAE4E2',
+    borderRadius: 4,
+    color: 'white',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 20,
+    alignItems:'center',
+    marginLeft:50,
+    marginRight:50,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 1.0,
+    borderColor: '#EAE4E2',
+    borderRadius: 8,
+    color: 'white',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
 });
 
 export default LoginScreen;
