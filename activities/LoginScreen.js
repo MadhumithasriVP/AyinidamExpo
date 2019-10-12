@@ -7,7 +7,9 @@ import AnimatedInput from 'react-native-animated-input-label';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Font from 'expo-font';
 import RNPickerSelect, { defaultStyles } from 'react-native-picker-select';
-import { Chevron } from 'react-native-shapes';
+import { Chevron } from 'react-native-shapes'; 
+// Add the Firebase services that you want to use
+import Firebase from '../config/Firebase';
 
 const usertype = [
   {
@@ -18,6 +20,10 @@ const usertype = [
     label: 'Orphanage',
     value: 'Orphanage',
   },
+  {
+    label: 'Function Hall',
+    value: 'Function Hall',
+  },
 ];
 
 class LoginScreen extends React.Component{
@@ -25,11 +31,22 @@ class LoginScreen extends React.Component{
       super(props);
       this.state = {
            //isReady: false,
-           username: '',
+           loading: false,
+           email: '',
            password: '', 
            firstSeenVal: undefined,
+           errorMessage: null,
       };
   }
+    onLogin = () => {
+        this.setState({ loading: true });
+        const { email, password } = this.state
+        Alert.alert('Message:',`${email}, thanks for logging in`);
+        Firebase.auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => this.props.navigation.navigate('HotelHome'))
+            .catch(error => console.log(error))
+    }
 
   // async componentDidMount(){
      //   await Font.loadAsync({
@@ -41,15 +58,13 @@ class LoginScreen extends React.Component{
   {
     header: null,    //Hide navigator top
   }
+  toForgetPassActivity = () =>
+{
+  Alert.alert('Message:',`Change password granted.`);
+}
   OpenRegisterActivityFunction = () =>
   {
     this.props.navigation.navigate('Register');
-  }
-  onLogin()
-  {
-    //const {username, password } = this.state;
-    //Alert.alert('Message:',`${username}, thanks for logging in`);
-    this.props.navigation.navigate('HotelHome');
   }
   handleFocus = () => this.setState({ isFocused: true });
   handleBlur = () => this.setState({ isFocused: false });
@@ -67,6 +82,9 @@ class LoginScreen extends React.Component{
               style={styles.container}
         >
           <Text style={styles.Head1Txt}>LOGIN</Text>
+          <Text style={{color:'white',textAlign:'center'}}>
+              {/* {this.state.errorMessage} */}
+        </Text>  
           <View paddingVertical={5} />
             {/* False -useNativeAndroidPickerStyle (default) and iOS onUpArrow/onDownArrow toggle example */}
           <RNPickerSelect
@@ -74,6 +92,7 @@ class LoginScreen extends React.Component{
             items={usertype}
             useNativeAndroidPickerStyle={false}
             value={this.state.firstSeenVal}
+            underlineColorAndroid="transparent"
             onValueChange={value => {
               this.setState({
                 firstSeenVal: value,
@@ -95,10 +114,11 @@ class LoginScreen extends React.Component{
           <View>               
               <AnimatedInput 
                   {...props}
-                  value={this.state.username}
-                  onChangeText={(username) => this.setState({ username })}
+                  value={this.state.email}
+                  onChangeText={(email) => this.setState({ email })}
                   labelStyle={styles.labelInput}
                   inputStyle={styles.input}
+                  keyboardType="email-address"
                   //onBlur={this.handleBlur}
                   style={styles.formInput}
                   underlineColorAndroid="transparent"
@@ -119,7 +139,8 @@ class LoginScreen extends React.Component{
           <View>
              <TouchableOpacity> 
                    <Text 
-                      style={styles.forgetpasslink}>
+                      style={styles.forgetpasslink}
+                      onPress={this.toForegetPassActivity}>
 		                  Forget Password ? 
 		               </Text>
               </TouchableOpacity>

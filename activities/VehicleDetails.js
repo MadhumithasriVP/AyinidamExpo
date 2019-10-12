@@ -1,12 +1,13 @@
 import React, { Component }  from 'react';
-import { Text, View, StyleSheet, TextInput } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Text, View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-class Map extends React.Component{
+class VehicleDetails extends React.Component{
   static navigationOptions=
   {
     title:'Vehicle Details',
+    headerStyle:{backgroundColor:'#003399'},
+    headerTintColor: '#fff',
     headerTitleStyle: {
            fontWeight: '500',
            fontSize: 25,
@@ -21,16 +22,10 @@ class Map extends React.Component{
               style={styles.container}
   >
     <View>
-      <TextInput
-        style={{ height: 300, borderColor: '#E4E4E2', borderWidth: 1, margin: 20 }}
-        multiline = {true}
-        numberOfLines = {18}
-      />
-      <Button
-              buttonStyle={styles.button}
-              title="SUBMIT"
-              titleStyle={styles.designTitle}
-             />
+      <Text 
+        style={styles.textDesign}
+        numberOfLines={5}
+      ></Text>
     </View>
   </LinearGradient>
   );
@@ -42,20 +37,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-    button:{
-    backgroundColor: '#ffffff',
-    borderColor: '#F08080',
+  textDesign:{
+    fontSize:20,
+    height:300,
     margin: 20,
-    minWidth: 10,
-    width: 130,
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 15  
-  },
-  designTitle:{
-    fontSize: 20, 
-    color:'blue'
+    borderColor:'#E4E4E2',
+    borderRadius:5,
+    borderWidth:1,
   }
 });
 
-export default Map;
+export default VehicleDetails;

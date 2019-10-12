@@ -3,7 +3,7 @@
     "name": "Ayinidam",
     "slug": "AyinidamEMB",
     "privacy": "public",
-    "sdkVersion": "34.0.0",
+    "sdkVersion": "35.0.0",
     "platforms": [
       "ios",
       "android",
@@ -25,7 +25,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.xpoFD.Ayinidam"
+    },
+    "android":{
+      "package": "com.xpoFD.Ayinidam",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyC05VDdqbwMJR9cf44ZEw8_vcYN3onpf5Y"}
+      }
     }
   }
 }

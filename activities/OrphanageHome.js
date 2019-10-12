@@ -3,7 +3,18 @@ import { View, Text, StyleSheet, Image} from 'react-native';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 
-class HotelHome extends React.Component{
+class OrphanageHome extends React.Component{
+ static navigationOptions=
+  {
+    title:'Orphanage Activity',
+    headerStyle:{backgroundColor:'#003399'},
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+           fontWeight: '500',
+           fontSize: 25,
+           color: '#F08080',
+                      },
+  }
 toVehicleDetActivity = () =>
 {
   this.props.navigation.navigate('VehicleDet');
@@ -97,9 +108,6 @@ const styles = StyleSheet.create({
   button:{
     backgroundColor: '#ffffff',
     borderColor: '#F08080',
-    //borderBottomColor: 'pink',
-    //borderRightColor: 'green',
-    //borderLeftColor: 'yellow',
     margin: 20,
     minWidth: 10,
     width: 130,
@@ -113,4 +121,4 @@ const styles = StyleSheet.create({
   }
 }); 
 
-export default HotelHome;
+export default OrphanageHome;
