@@ -1,50 +1,44 @@
-import React, { Component }  from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-
-class OrphanRequest extends React.Component{
+import React, { Component } from 'react';
+import Dummy from './Dummy';
+import Firebase, {db} from '../config/Firebase';
+export default class OrphanRequest extends Component {
   static navigationOptions=
   {
-    title:'Asked for Donation Info',
+    title:'List of Doantions Made',
     headerStyle:{backgroundColor:'#003399'},
     headerTintColor: '#fff',
     headerTitleStyle: {
            fontWeight: '500',
            fontSize: 25,
-           color: '#F08080',
-                      },
+           color: '#F08080',     },
   }
-    render()
-    {
-  return (
-  <LinearGradient
-              colors={['#003399','#3366FF','#3399FF','#66ccff']}
-              style={styles.container}
-  >
-    <View>
-      <Text 
-        style={styles.textDesign}
-        numberOfLines={5}
-      ></Text>
-    </View>
-  </LinearGradient>
-  );
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentUser: null,
+      data_Values: [],
+    };
+  }
+  
+  componentDidMount(){
+    const { currentUser } = Firebase.auth() 
+           this.setState({ currentUser })
+  }
+
+  componentWillMount() {
+        db.ref('/HotelDReq').on('value', function(snapshot) {
+           let data = snapshot.val();
+           for(let i in data) {
+               this.state.data_Values.push(data[i]);
+           }
+           this.setState({data_Values: this.state.data_Values});
+       }.bind(this));
+  }
+
+  render() {
+      return (
+            <Dummy navigation={this.props.navigation} data_Values={this.state.data_Values}/>
+      ) 
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  textDesign:{
-    fontSize:20,
-    height:300,
-    margin: 20,
-    borderColor:'#E4E4E2',
-    borderRadius:5,
-    borderWidth:1,
-  },
-});
-
-export default OrphanRequest;

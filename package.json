@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "expo": "^34.0.4",
-    "expo-constants": "^7.0.0",
+    "expo-constants": "^6.0.0",
     "expo-font": "^6.0.1",
-    "expo-image-picker": "^7.0.0",
+    "expo-image-picker": "^6.0.0",
     "expo-linear-gradient": "^6.0.0",
-    "expo-permissions": "^7.0.0",
+    "expo-permissions": "^6.0.0",
     "firebase": "^7.0.0",
     "native-base": "^2.13.5",
     "react": "16.8.3",
@@ -31,7 +31,8 @@
     "react-native-shapes": "^0.1.0",
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.4",
-    "react-navigation": "^3.11.1"
+    "react-navigation": "^3.11.1",
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "babel-preset-expo": "^6.0.0"

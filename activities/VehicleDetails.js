@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 class VehicleDetails extends React.Component{
   static navigationOptions=
   {
-    title:'Vehicle Details',
+    title:'Orphanage Message',
     headerStyle:{backgroundColor:'#003399'},
     headerTintColor: '#fff',
     headerTitleStyle: {
@@ -25,7 +25,7 @@ class VehicleDetails extends React.Component{
       <Text 
         style={styles.textDesign}
         numberOfLines={5}
-      ></Text>
+      >Request Accepted</Text>
     </View>
   </LinearGradient>
   );

@@ -1,5 +1,5 @@
 import React, { Component }  from 'react';
-import { Alert, TextInput, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
+import { Alert, TextInput, TouchableOpacity, Text, View, StyleSheet, KeyboardAvoidingView} from 'react-native';
 //StyleSheet.setStyleAttributePreprocessor('fontFamily', Font.processFontFamily);
 import GradientButton from 'react-native-gradient-buttons';
 import { AppLoading } from 'expo';
@@ -8,21 +8,26 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Font from 'expo-font';
 import RNPickerSelect, { defaultStyles } from 'react-native-picker-select';
 import { Chevron } from 'react-native-shapes'; 
+import validation from './registerValidation';
+import validate from './validation_wrapper';
 // Add the Firebase services that you want to use
-import Firebase from '../config/Firebase';
+import Firebase, {db} from '../config/Firebase';
 
 const usertype = [
   {
     label: 'Hotel',
     value: 'Hotel',
+    key: 'Hotel',
   },
   {
     label: 'Orphanage',
     value: 'Orphanage',
+    key: 'Orphanage',
   },
   {
     label: 'Function Hall',
     value: 'Function Hall',
+    key: 'Function Hall',
   },
 ];
 
@@ -34,18 +39,39 @@ class LoginScreen extends React.Component{
            loading: false,
            email: '',
            password: '', 
+           error: '',
            firstSeenVal: undefined,
+           usertypeError: '',
            errorMessage: null,
       };
   }
     onLogin = () => {
-        this.setState({ loading: true });
-        const { email, password } = this.state
-        Alert.alert('Message:',`${email}, thanks for logging in`);
-        Firebase.auth()
+        const usertypeError = validate('usertype', this.state.firstSeenVal);
+        this.setState({ loading: true});
+        this.setState({ usertypeError: usertypeError });
+        const { email, password, firstSeenVal } = this.state
+        //Alert.alert('Message:',`${email}, thanks for logging in`);
+          if(firstSeenVal== "Hotel")
+          {
+            Firebase.auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => this.props.navigation.navigate('HotelHome'))
-            .catch(error => console.log(error))
+            .catch(() => {this.setState({ error: 'Authentication failed, Password or login incorrect', loading: false })})
+          }
+          if(firstSeenVal== "Orphanage")
+          {
+           Firebase.auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => this.props.navigation.navigate('OrphanageHome'))
+            .catch(() => {this.setState({ error: 'Authentication failed, Password or login incorrect', loading: false })})
+          }
+          if(firstSeenVal== "Function Hall")
+          {
+            Firebase.auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => this.props.navigation.navigate('FunctionHome'))
+            .catch(() => {this.setState({ error: 'Authentication failed, Password or login incorrect', loading: false })})
+          }               
     }
 
   // async componentDidMount(){
@@ -76,15 +102,13 @@ class LoginScreen extends React.Component{
       value: null,
       color: '#F08080',
     };
-    return(        
+    return(      
+      <KeyboardAvoidingView style={styles.container}>
         <LinearGradient
               colors={['#003399','#3366FF','#3399FF','#66ccff']}
               style={styles.container}
         >
-          <Text style={styles.Head1Txt}>LOGIN</Text>
-          <Text style={{color:'white',textAlign:'center'}}>
-              {/* {this.state.errorMessage} */}
-        </Text>  
+          <Text style={styles.Head1Txt}>LOGIN</Text>  
           <View paddingVertical={5} />
             {/* False -useNativeAndroidPickerStyle (default) and iOS onUpArrow/onDownArrow toggle example */}
           <RNPickerSelect
@@ -98,6 +122,7 @@ class LoginScreen extends React.Component{
                 firstSeenVal: value,
               });
             }}
+            onBlur={() => {this.setState({usertypeError: validate('usertype', this.state.firstSeenVal)})}}
             style={{
               ...pickerSelectStyles,
               width: 200,
@@ -111,6 +136,7 @@ class LoginScreen extends React.Component{
               return <Chevron size={2.0} color="#EAE4E2" />;
             }}
           />
+          <View><Text style={styles.errorMsg}>{this.state.usertypeError}</Text></View>
           <View>               
               <AnimatedInput 
                   {...props}
@@ -118,6 +144,7 @@ class LoginScreen extends React.Component{
                   onChangeText={(email) => this.setState({ email })}
                   labelStyle={styles.labelInput}
                   inputStyle={styles.input}
+                  autoCapitalize = "none"
                   keyboardType="email-address"
                   //onBlur={this.handleBlur}
                   style={styles.formInput}
@@ -134,9 +161,10 @@ class LoginScreen extends React.Component{
                   style={styles.formInput}
                   underlineColorAndroid="transparent"
               >Password</AnimatedInput>
+              <Text style={{color:'white',textAlign:'left',marginLeft:10}}>{this.state.error} </Text>
           </View>
 
-          <View>
+          {/* <View>
              <TouchableOpacity> 
                    <Text 
                       style={styles.forgetpasslink}
@@ -144,7 +172,7 @@ class LoginScreen extends React.Component{
 		                  Forget Password ? 
 		               </Text>
               </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={{ justifyContent: 'center', marginVertical: 16, alignItems: 'center'}}>
              <GradientButton
                    text="SIGN IN"
@@ -168,6 +196,7 @@ class LoginScreen extends React.Component{
               </TouchableOpacity>
           </View>
         </LinearGradient>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -183,6 +212,11 @@ const styles = StyleSheet.create({
     color:'#ffffff',
     textAlign:'center',
     paddingBottom:40,
+  },
+  errorMsg: {
+    color:'white',
+    textAlign:'left', 
+    marginLeft:10,
   },
   ActNmeTxt: {
     fontSize:35,

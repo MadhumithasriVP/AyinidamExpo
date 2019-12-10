@@ -1,11 +1,23 @@
 import React, { Component }  from 'react';
-import { View, Text, StyleSheet, Image} from 'react-native';
+import { View, Text, StyleSheet, Image, Platform, TouchableOpacity} from 'react-native';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
+import Firebase, {db} from '../config/Firebase';
+import {Feather} from '@expo/vector-icons';
+
+let usersRef = db.ref('/Users/Orphanages');
 
 class OrphanageHome extends React.Component{
- static navigationOptions=
-  {
+ state = {
+    currentUser: null
+  };
+
+ componentDidMount(){
+  const { currentUser } = Firebase.auth()
+          this.setState({ currentUser }) 
+ }
+ static navigationOptions= ({ navigation }) => {
+  return {
     title:'Orphanage Activity',
     headerStyle:{backgroundColor:'#003399'},
     headerTintColor: '#fff',
@@ -14,28 +26,47 @@ class OrphanageHome extends React.Component{
            fontSize: 25,
            color: '#F08080',
                       },
-  }
+    headerRight: (
+      <TouchableOpacity onPress={()=>Firebase.auth()
+                                             .signOut()
+                                             .then(() => navigation.navigate('Login'))}>
+      <Feather
+        name="log-out"
+        size={28} 
+        color="white"
+      />
+      </TouchableOpacity>
+    ),
+  };
+ };
 toVehicleDetActivity = () =>
 {
   this.props.navigation.navigate('VehicleDet');
 }
 toMapActivity = () =>
 {
-  this.props.navigation.navigate('Map');
+  this.props.navigation.navigate('LookHotels');
 }
 toOrphanReqActivity = () =>
 {
   this.props.navigation.navigate('OrphanReq');
 }
+toAccDenActivity = () =>
+{
+  this.props.navigation.navigate('AcceptDeny');
+}
 render()
 {
+  const { navigate } = this.props.navigation;
+  const{ currentUser } = this.state;
   return(
     <View style={styles.container}>
       <View style={styles.profile}>
         <Image 
             style={styles.stretch}
-            source={require('../assets/profile2.png')}
+            source={require('../assets/orphanage.jpg')}
         />
+        <Text>Welcome {currentUser && currentUser.email} !</Text>
         <Text style={styles.profileText}>ORPHANAGE</Text>
       </View>
       <LinearGradient
@@ -46,13 +77,13 @@ render()
            <Button
               outline="true"
               buttonStyle={styles.button}
-              title="Accept"
+              title="Accept or Deny"
               titleStyle={styles.designTitle}
-             // onPress={this.toMapActivity}
+              onPress={this.toAccDenActivity}
              />
            <Button
               buttonStyle={styles.button}
-              title="Map"
+              title="Hotel List"
               titleStyle={styles.designTitle}
               onPress={this.toMapActivity}/>
           </View>
@@ -61,13 +92,11 @@ render()
               buttonStyle={styles.button}
               title="Vehicle Details" 
               titleStyle={styles.designTitle}
-              outline = "true"
-             // onPress={this.toOrphanReqActivity}/>
+              outline = "true"/>
            <Button
               buttonStyle={styles.button}
               title="Food Delivery Details"
-              titleStyle={styles.designTitle}
-              //onPress={this.toMapActivity}/>
+              titleStyle={styles.designTitle}/>
           </View>
       </LinearGradient>    
     </View>  

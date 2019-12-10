@@ -5,7 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Firebase, {db} from '../config/Firebase';
 import {Feather} from '@expo/vector-icons';
 
-let usersRef = db.ref('/users');
+// let usersRef = db.ref('/Users/Hotels');
+// usersRef.on('value', function(snapshot) {
+//      snapshot.forEach(function(childSnapshot) {
+//        var childData = childSnapshot.child("email").val();
+//        //console.log(childData);
+//      });
+//  });
 
 class HotelHome extends React.Component{
   state = {
@@ -13,16 +19,13 @@ class HotelHome extends React.Component{
   };
     
 componentDidMount(){
- // usersRef.on('value', snapshot => {
-    //let data = snapshot.val();
-    //let users = Object.values(data);
-    //this.setState({users});
-  //});
+ // usersRef.on('value', snapshot => {  let data = snapshot.val();  let users = Object.values(data);
+    //this.setState({users});   });
   const { currentUser } = Firebase.auth()
     this.setState({ currentUser })
 }
-static navigationOptions=
-  {
+static navigationOptions= ({ navigation }) => {
+  return {
     title:'Hotel Activity',
     headerStyle:{backgroundColor:'#77ccff'},
     headerTintColor: '#fff',
@@ -32,7 +35,9 @@ static navigationOptions=
            color: '#F08080',
                       },
     headerRight: (
-      <TouchableOpacity onPress={this.toLogOutActivity}>
+      <TouchableOpacity onPress={()=>Firebase.auth()
+                                             .signOut()
+                                             .then(() => navigation.navigate('Login'))}>
       <Feather
         name="log-out"
         size={28} 
@@ -40,24 +45,19 @@ static navigationOptions=
       />
       </TouchableOpacity>
     ),
-  }
-toLogOutActivity = () =>
-{
-  Firebase.auth()
-            .signOut()
-            .then(() => this.props.navigation.navigate('Login'))
-}
+  };
+};
 toMapActivity = () =>
 {
-  this.props.navigation.navigate('Map');
+  this.props.navigation.navigate('LookOrphanages');
 }
 toOrphanReqActivity = () =>
 {
   this.props.navigation.navigate('OrphanReq');
 }
-toAccDenActivity = () =>
+toAccDenOrpReqActivity = () =>
 {
-  this.props.navigation.navigate('AcceptDeny');
+  this.props.navigation.navigate('AcceptDenyOrpReq');
 }
 toVehicleDetActivity = () =>
 {
@@ -66,13 +66,14 @@ toVehicleDetActivity = () =>
 
 render()
 {
+  const { navigate } = this.props.navigation;
   const{ currentUser } = this.state;
   return(
     <View style={styles.container}>
       <View style={styles.profile}>
         <Image 
             style={styles.stretch}
-            source={require('../assets/profile2.png')}
+            source={require('../assets/restaurant.jpg')}
         />
         <Text>Welcome {currentUser && currentUser.email} !</Text>
         {/* <View style={styles.itemsList}>
@@ -84,14 +85,7 @@ render()
             );
         })}
         </View> */}
-
         <Text style={styles.profileText}>HOTEL</Text>
-        <Button
-              buttonStyle={styles.button1}
-              title="LogOut" 
-              titleStyle={styles.designTitle}
-              outline = "true"
-              onPress={this.toLogOutActivity}/>
       </View>
       <LinearGradient
               colors={['#3399FF','#3366FF','#003399']}
@@ -108,7 +102,7 @@ render()
           <View style={styles.makeGroup}>
            <Button
               buttonStyle={styles.button}
-              title="Map"
+              title="Orphange List"
               titleStyle={styles.designTitle}
               onPress={this.toMapActivity}/>           
            <Button 
@@ -125,11 +119,11 @@ render()
               buttonStyle={styles.button}
               title="Food Request Accept or Denial"
               titleStyle={styles.designTitle}
-              onPress={this.toAccDenActivity}
+              onPress={this.toAccDenOrpReqActivity}
              />
            <Button
               buttonStyle={styles.button}
-              title="Transport Facility Details"
+              title="Response"
               titleStyle={styles.designTitle}
               onPress={this.toVehicleDetActivity}/>
           </View>

@@ -1,12 +1,14 @@
 import React, { Component }  from 'react';
 import { Alert, Text, View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
+import ADOrphSide from './ADOrphSide';
 import { LinearGradient } from 'expo-linear-gradient';
+import Firebase, {db} from '../config/Firebase';
 
 class AcceptDeny extends React.Component{
   static navigationOptions=
   {
-    title:'Vehicle Details',
+    title:'Accept or Deny',
     headerStyle:{backgroundColor:'#003399'},
     headerTintColor: '#fff',
     headerTitleStyle: {
@@ -23,18 +25,32 @@ toDenyActivity = () =>
 {
   Alert.alert('Message:',`Request Denied.`);
 }
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentUser: null,
+      data_Values: [],
+    };
+  }
+ componentDidMount(){
+    const { currentUser } = Firebase.auth() 
+           this.setState({ currentUser })
+  }
+
+  componentWillMount() {
+        db.ref('HotelDReq').on('value', function(snapshot) {
+           let data = snapshot.val();
+           for(let i in data) {
+               this.state.data_Values.push(data[i]);
+           }
+           this.setState({data_Values: this.state.data_Values});
+       }.bind(this));
+  }
     render()
     {
   return (
-  <LinearGradient
-              colors={['#003399','#3366FF','#3399FF','#66ccff']}
-              style={styles.container}
-  >
-    <View>
-      <Text 
-        style={styles.textDesign}
-        numberOfLines={5}
-      ></Text>
+      <View style={styles.container}>
+      <ADOrphSide navigation={this.props.navigation} data_Values={this.state.data_Values}></ADOrphSide>
       <View style={styles.makeGroup}>
             <Button
               buttonStyle={styles.button}
@@ -49,8 +65,7 @@ toDenyActivity = () =>
               onPress={this.toDenyActivity}
             />
       </View>
-    </View>
-  </LinearGradient>
+</View>
   );
     }
 }
@@ -59,7 +74,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems:'center',
   },
    textDesign:{
     fontSize:20,
